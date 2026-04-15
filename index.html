@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Habit Streak Tracker</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+background:#1e293b;
+padding:30px;
+border-radius:10px;
+width:350px;
+text-align:center;
+}
+
+input{
+width:70%;
+padding:10px;
+border:none;
+border-radius:6px;
+}
+
+button{
+padding:10px;
+border:none;
+background:#22c55e;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+.habit{
+background:#334155;
+padding:10px;
+margin-top:10px;
+border-radius:6px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🔥 Habit Streak Tracker</h2>
+
+<input id="habitInput" placeholder="New habit">
+<button onclick="addHabit()">Add</button>
+
+<div id="list"></div>
+
+</div>
+
+<script>
+
+let habits = JSON.parse(localStorage.getItem("habits")) || []
+
+function today(){
+return new Date().toDateString()
+}
+
+function render(){
+
+let list = document.getElementById("list")
+list.innerHTML = ""
+
+habits.forEach((h,index)=>{
+
+let div = document.createElement("div")
+div.className = "habit"
+
+div.innerHTML = `
+<span>${h.name} (🔥 ${h.streak})</span>
+<button onclick="markDone(${index})">✔</button>
+`
+
+list.appendChild(div)
+
+})
+
+localStorage.setItem("habits", JSON.stringify(habits))
+
+}
+
+function addHabit(){
+
+let input = document.getElementById("habitInput")
+
+if(input.value.trim()==="") return
+
+habits.push({
+name: input.value,
+streak: 0,
+lastDone: null
+})
+
+input.value = ""
+
+render()
+
+}
+
+function markDone(index){
+
+let h = habits[index]
+let todayDate = today()
+
+if(h.lastDone === todayDate){
+alert("Already done today!")
+return
+}
+
+let yesterday = new Date()
+yesterday.setDate(yesterday.getDate() - 1)
+
+if(h.lastDone === yesterday.toDateString()){
+h.streak++
+}else{
+h.streak = 1
+}
+
+h.lastDone = todayDate
+
+render()
+
+}
+
+render()
+
+</script>
+
+</body>
+</html>
